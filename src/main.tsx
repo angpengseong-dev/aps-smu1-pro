@@ -4,17 +4,31 @@ import App from './App.tsx';
 import './index.css';
 
 // Global error handler to catch third-party cross-origin script errors (e.g. Disqus iframe constraints)
+window.onerror = function (message, source, lineno, colno, error) {
+  if (
+    message === 'Script error.' ||
+    message === 'Script error' ||
+    (typeof message === 'string' &&
+      (message.includes('Disqus') ||
+        message.includes('disqus') ||
+        message.includes('SecurityError')))
+  ) {
+    return true; // Suppress cross-origin script error from bubbling up
+  }
+  return false;
+};
+
 window.addEventListener(
   'error',
   (event) => {
     if (
       event.message === 'Script error.' ||
+      event.message === 'Script error' ||
       (typeof event.message === 'string' &&
         (event.message.includes('Disqus') ||
           event.message.includes('disqus') ||
           event.message.includes('SecurityError')))
     ) {
-      // Prevent cross-origin third-party script error from crashing preview
       event.preventDefault();
       event.stopPropagation();
       return true;

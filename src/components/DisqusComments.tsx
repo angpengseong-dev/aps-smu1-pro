@@ -20,6 +20,7 @@ export const DisqusComments: React.FC = () => {
       s.src = 'https://aps-smu.disqus.com/embed.js';
       s.setAttribute('data-timestamp', (+new Date()).toString());
       s.async = true;
+      s.crossOrigin = 'anonymous';
       s.onerror = () => {
         console.warn('Disqus embed script failed to load or was blocked.');
         setLoadError(true);
@@ -43,6 +44,7 @@ export const DisqusComments: React.FC = () => {
       countScript.id = 'dsq-count-scr';
       countScript.src = 'https://aps-smu.disqus.com/count.js';
       countScript.async = true;
+      countScript.crossOrigin = 'anonymous';
       countScript.onerror = () => {
         console.warn('Disqus count script failed to load.');
       };
