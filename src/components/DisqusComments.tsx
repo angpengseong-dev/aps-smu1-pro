@@ -1,9 +1,17 @@
-import React, { useEffect } from 'react';
-import { MessageSquare } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { MessageSquare, AlertCircle } from 'lucide-react';
 
 export const DisqusComments: React.FC = () => {
+  const [loadError, setLoadError] = useState(false);
+
   useEffect(() => {
-    // Inject disqus_thread embed script exactly as specified
+    // Configure disqus_config on window
+    (window as any).disqus_config = function (this: any) {
+      this.page.url = window.location.href;
+      this.page.identifier = 'terminalpro-main-forum';
+    };
+
+    // Inject disqus_thread embed script
     const existingEmbed = document.getElementById('disqus-embed-script');
     if (!existingEmbed) {
       const d = document;
@@ -12,20 +20,32 @@ export const DisqusComments: React.FC = () => {
       s.src = 'https://aps-smu.disqus.com/embed.js';
       s.setAttribute('data-timestamp', (+new Date()).toString());
       s.async = true;
+      s.onerror = () => {
+        console.warn('Disqus embed script failed to load or was blocked.');
+        setLoadError(true);
+      };
       (d.head || d.body).appendChild(s);
     } else if ((window as any).DISQUS) {
-      (window as any).DISQUS.reset({
-        reload: true,
-      });
+      try {
+        (window as any).DISQUS.reset({
+          reload: true,
+          config: (window as any).disqus_config
+        });
+      } catch (err) {
+        console.warn('Failed to reset Disqus instance:', err);
+      }
     }
 
-    // Inject count script as specified
+    // Inject count script with explicit https protocol
     const existingCountScript = document.getElementById('dsq-count-scr');
     if (!existingCountScript) {
       const countScript = document.createElement('script');
       countScript.id = 'dsq-count-scr';
-      countScript.src = '//aps-smu.disqus.com/count.js';
+      countScript.src = 'https://aps-smu.disqus.com/count.js';
       countScript.async = true;
+      countScript.onerror = () => {
+        console.warn('Disqus count script failed to load.');
+      };
       (document.head || document.body).appendChild(countScript);
     }
   }, []);
@@ -50,6 +70,13 @@ export const DisqusComments: React.FC = () => {
           </span>
         </div>
 
+        {loadError && (
+          <div className="p-4 bg-[#FF5252]/10 border border-[#FF5252]/30 rounded-lg text-xs text-[#FF5252] mb-4 flex items-center gap-2 font-mono-data">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>Disqus comments couldn't be loaded directly in this preview environment. You can open the app in a new tab or visit Disqus directly to participate.</span>
+          </div>
+        )}
+
         <div id="disqus_thread" className="min-h-[220px] text-[#dfe2f2]"></div>
         <noscript>
           Please enable JavaScript to view the{' '}
@@ -61,3 +88,4 @@ export const DisqusComments: React.FC = () => {
     </section>
   );
 };
+
