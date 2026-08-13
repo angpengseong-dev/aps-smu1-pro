@@ -1,0 +1,6 @@
+{
+  "name": "TerminalPro",
+  "description": "Professional financial markets terminal with real-time stock indices, high-volume data tables, market status, community trends, interactive charts, and AI financial insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
