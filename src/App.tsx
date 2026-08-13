@@ -12,6 +12,7 @@ import { NewsSection } from './components/NewsSection';
 import { WatchlistSection } from './components/WatchlistSection';
 import { SettingsModal } from './components/SettingsModal';
 import { NotificationsDrawer } from './components/NotificationsDrawer';
+import { DisqusComments } from './components/DisqusComments';
 
 import { INITIAL_INDICES, INITIAL_STOCKS, COMMUNITY_TRENDS, MARKET_NEWS } from './data/mockData';
 import { MarketCategory, IndexData, StockTicker, PortfolioPosition } from './types';
@@ -303,6 +304,9 @@ export default function App() {
             onRemoveFromWatchlist={handleToggleWatchlist}
           />
         ) : null}
+
+        {/* Community Disqus Forum Section */}
+        <DisqusComments />
       </main>
 
       {/* Ticker Detail & AI Analyst Modal */}
